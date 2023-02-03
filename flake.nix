@@ -1,5 +1,5 @@
 {
-  description = "ECE 140a Python Environment";
+  description = "ECE 176 Python Environment";
 
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/master";
