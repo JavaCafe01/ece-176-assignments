@@ -11,7 +11,8 @@
       let
         python = "python39";
         pkgs = nixpkgs.legacyPackages.${system};
-      in {
+      in
+      {
         devShell = pkgs.mkShell {
           buildInputs = [
             (pkgs.${python}.withPackages
