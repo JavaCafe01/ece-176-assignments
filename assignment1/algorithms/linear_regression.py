@@ -32,21 +32,18 @@ class Linear(object):
         """
         
 
-        N, D = X_train.shape
+        N, _ = X_train.shape
         self.w = weights
         dW = np.zeros_like(self.w)
 
         # One-hot
-        y_train_hot = np.zeros((len(y_train), self.n_class))
-        for idx, val in enumerate(y_train):
-            y_train_hot[idx][val] = 1
+        y_train_hot = np.eye(self.n_class)[y_train]
 
         # The update formula
         for _ in range(self.epochs):
             for i in range(N):
                 dW += 2 * np.outer((np.dot(self.w, X_train[i].T) - y_train_hot[i]), X_train[i].T)
             dW /= N
-
             self.w = self.w - (self.lr * ((self.weight_decay * self.w) + dW))
 
 

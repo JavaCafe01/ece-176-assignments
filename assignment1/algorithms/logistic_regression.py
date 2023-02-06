@@ -14,12 +14,13 @@ class Logistic(object):
             lr: the learning rate
             epochs: the number of epochs to train for
         """
-        self.w = None  # TODO: change this
+        self.w = None
         self.lr = lr
         self.epochs = epochs
         self.n_class = n_class
         self.threshold = 0.5 # To threshold the sigmoid 
         self.weight_decay = weight_decay
+
 
     def sigmoid(self, z: np.ndarray) -> np.ndarray:
         """Sigmoid function.
@@ -30,7 +31,12 @@ class Logistic(object):
         Returns:
             the sigmoid of the input
         """
-        # TODO: implement me
+        
+        sigma = np.zeros_like(z)
+        sigma[z < 0] = 1 / (np.exp(self.n_class * z[z < 0]) + 1)
+        sigma[z >= 0] = 1 / (1 + np.exp(-1 * self.n_class * z[z >= 0]))
+
+        return sigma
 
 
     def train(self, X_train: np.ndarray, y_train: np.ndarray, weights: np.ndarray) -> np.ndarray:
@@ -46,11 +52,21 @@ class Logistic(object):
         """
         
 
-        N, D = X_train.shape
+        N, _ = X_train.shape
         self.w = weights
+        dW = np.zeros_like(self.w)
 
-        # TODO: implement me
-        
+        # One-hot
+        y_train_hot = np.eye(self.n_class)[y_train]
+
+        # The update formula
+        for _ in range(self.epochs):
+            for i in range(N):
+                dW += 2 * np.outer((np.dot(self.w, X_train[i].T) - y_train_hot[i]), X_train[i].T)
+            dW /= N
+            self.w = self.w - (self.lr * ((self.weight_decay * self.w) + dW))
+
+
         return self.w
 
 
@@ -66,4 +82,4 @@ class Logistic(object):
                 length N, where each element is an integer giving the predicted
                 class.
         """
-        # TODO: implement me
+        return self.sigmoid(X_test.dot(self.w.T)).argmax(axis=1)
